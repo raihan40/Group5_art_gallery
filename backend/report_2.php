@@ -15,7 +15,7 @@
         <input type="checkbox" id="nav-toggle" class="nav-toggle" />
         <nav>
             <ul>
-                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.php">Home</a></li>
                 <li><a href="report_1.php">Report 1</a></li>
                 <li><a href="#" class="active-link">Report 2</a></li>
                 <li><a href="report_3.php">Report 3</a></li>
@@ -72,6 +72,12 @@
                             if (isset ($_POST['submit'])) {
                                 $start = $_POST['start'];
                                 $end= $_POST['end'];
+                                if($start > $end){
+                                    echo "<script>alert('Starting date should be previous date from ending date');window.location.href='report_2.php'</script>";
+
+                                    die();
+                                }
+                               /*TABLE GENERATE AFTER FIND ROWS */
                                 $sql = "SELECT art_work.TITLE,of_group.GROUP_NAME,artist.ANAME, art_work.PRICE ,buy.DATE,buy.CNAME FROM artist,art_work, buy, of_group WHERE artist.ANAME = art_work.ANAME and art_work.TITLE = buy.TITLE and buy.TITLE = of_group.TITLE and buy.DATE BETWEEN  '$start' AND '$end' ORDER BY of_group.GROUP_NAME;";
                                 $sql1= "SELECT of_group.GROUP_NAME,sum(art_work.PRICE) as value FROM art_work, buy, of_group WHERE art_work.TITLE = buy.TITLE and buy.TITLE = of_group.TITLE and buy.DATE BETWEEN  '$start' AND '$end' group BY of_group.GROUP_NAME;";
                                 $result = mysqli_query($con, $sql);
@@ -80,7 +86,7 @@
                                 $numrows1 = mysqli_num_rows($result1); 
 
                                 if($numrows==0 || $numrows1==0 ) {  
-                                    echo "<script>alert('NO RESULT!')'</script>";
+                                    echo "<script>alert('No Result!');window.location.href='report_2.php'</script>";
                                     die();
                                 }
                                 while($row = $result->fetch_assoc()) {
